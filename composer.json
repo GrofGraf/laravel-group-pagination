@@ -1,5 +1,5 @@
 {
-    "name": "grofgraf/laravel-time-pagination",
+    "name": "grofgraf/laravel-group-pagination",
     "description": "Package for Laravel that merges multiple PDFs into one.",
     "type": "library",
     "keywords": [
