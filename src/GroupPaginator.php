@@ -1,10 +1,10 @@
 <?php
 
-namespace GrofGraf\LaravelTimePagination;
+namespace GrofGraf\LaravelGroupPagination;
 
 use Illuminate\Support\Collection;
 
-class TimePaginator extends \Illuminate\Pagination\Paginator
+class GroupPaginator extends \Illuminate\Pagination\Paginator
 {
 
     public static function resolveCurrentPage($pageName = 'page', $default = null, $pages = [])

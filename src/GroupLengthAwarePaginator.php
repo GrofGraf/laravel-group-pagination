@@ -1,13 +1,13 @@
 <?php
 
-namespace GrofGraf\LaravelTimePagination;
+namespace GrofGraf\LaravelGroupPagination;
 
 use Illuminate\Support\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator as LengthAwarePaginatorContract;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
-class TimeLengthAwarePaginator extends \Illuminate\Pagination\LengthAwarePaginator
+class GroupLengthAwarePaginator extends \Illuminate\Pagination\LengthAwarePaginator
 {
 
   protected $onPage;
@@ -58,7 +58,7 @@ class TimeLengthAwarePaginator extends \Illuminate\Pagination\LengthAwarePaginat
 
   protected function elements()
   {
-      $window = TimeUrlWindow::make($this);
+      $window = GroupUrlWindow::make($this);
 
       return array_filter([
           $window['first'],

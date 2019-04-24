@@ -1,13 +1,13 @@
 <?php
 
-namespace GrofGraf\LaravelTimePagination;
+namespace GrofGraf\LaravelGroupPagination;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Builder;
 use \Illuminate\Pagination\Paginator;
 use DB;
 
-class TimePaginationServiceProvider extends ServiceProvider
+class GroupPaginationServiceProvider extends ServiceProvider
 {
     /**
      * Register services.
@@ -16,7 +16,7 @@ class TimePaginationServiceProvider extends ServiceProvider
      */
     public function register()
     {
-      /*TimePaginator::currentPageResolver(function ($pageName = 'page', $default = 1, $pages = []) {
+      /*GroupPaginator::currentPageResolver(function ($pageName = 'page', $default = 1, $pages = []) {
           $page = $this->app['request']->input($pageName);
           $page = collect($pages)->search(function($i) use ($page){
             return $i == $page;
@@ -25,7 +25,7 @@ class TimePaginationServiceProvider extends ServiceProvider
             return $page + 1;
           }
       });*/
-      TimePaginator::currentPageResolver(function ($pageName = 'page', $default = 1, $pages = []) {
+      GroupPaginator::currentPageResolver(function ($pageName = 'page', $default = 1, $pages = []) {
           $page = $this->app['request']->input($pageName);
           $pageExists = collect($pages)->search(function($i) use ($page){
             return $i == $page;
@@ -48,7 +48,7 @@ class TimePaginationServiceProvider extends ServiceProvider
     public function boot()
     {
 
-      Builder::macro('timePaginate', function ($column, $start, $length, $order = 'asc', $format = 'Y-m-d', $pageName = 'page') {
+      Builder::macro('groupPaginate', function ($column, $start, $length, $order = 'asc', $format = 'Y-m-d', $pageName = 'page') {
 
         $query = $this->toBase()->orderBy($column, $order)->get(['*']);
 
@@ -60,7 +60,7 @@ class TimePaginationServiceProvider extends ServiceProvider
             throw new \Exception("The field is not in correct format");
           }
         });
-        $page = TimePaginator::resolveCurrentPage($pageName, 1, $pages->keys());
+        $page = GroupPaginator::resolveCurrentPage($pageName, 1, $pages->keys());
         $firstItem = 1;
         foreach($pages->keys() as $p){
           if($p != $page){
@@ -71,7 +71,7 @@ class TimePaginationServiceProvider extends ServiceProvider
         }
         $items = $page !== false && isset($pages[$page]) ? $pages[$page] : collect();
         //$items = collect();
-        return new TimeLengthAwarePaginator($items, $total, $pages->keys(), $firstItem, $page, [
+        return new GroupLengthAwarePaginator($items, $total, $pages->keys(), $firstItem, $page, [
             'path' => Paginator::resolveCurrentPath(),
             'pageName' => $pageName,
         ]);

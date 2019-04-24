@@ -1,8 +1,8 @@
 <?php
 
-namespace GrofGraf\LaravelTimePagination;
+namespace GrofGraf\LaravelGroupPagination;
 
-class TimeUrlWindow extends \Illuminate\Pagination\UrlWindow
+class GroupUrlWindow extends \Illuminate\Pagination\UrlWindow
 {
 
     protected function getSmallSlider()
