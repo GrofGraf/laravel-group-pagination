@@ -1,0 +1,20 @@
+{
+    "name": "grofgraf/laravel-time-pagination",
+    "description": "Package for Laravel that merges multiple PDFs into one.",
+    "type": "library",
+    "keywords": [
+      "grofgraf",
+      "laravel",
+      "pdf",
+      "merger",
+      "pdfmerger",
+      "pdf-merger"
+    ],
+    "license": "MIT",
+    "require": {},
+    "autoload": {
+      "psr-4": {
+          "GrofGraf\\LaravelPDFMerger\\": "src"
+      }
+    }
+}
