@@ -5,16 +5,15 @@
     "keywords": [
       "grofgraf",
       "laravel",
-      "pdf",
-      "merger",
-      "pdfmerger",
-      "pdf-merger"
+      "pagination",
+      "group-pagination",
+      "group pagination",
     ],
     "license": "MIT",
     "require": {},
     "autoload": {
       "psr-4": {
-          "GrofGraf\\LaravelPDFMerger\\": "src"
+          "GrofGraf\\LaravelGroupPagination\\": "src"
       }
     }
 }
