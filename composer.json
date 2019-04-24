@@ -7,7 +7,6 @@
       "laravel",
       "pagination",
       "group-pagination",
-      "group pagination",
     ],
     "license": "MIT",
     "require": {},
