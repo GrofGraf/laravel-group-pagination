@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator as LengthAwarePaginatorContract;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Illuminate\Support\HtmlString;
 
 class GroupLengthAwarePaginator extends \Illuminate\Pagination\LengthAwarePaginator
 {
@@ -14,6 +15,8 @@ class GroupLengthAwarePaginator extends \Illuminate\Pagination\LengthAwarePagina
   protected $firstPage;
   protected $pages;
   protected $firstItem;
+
+  public static $defaultView = 'group-pagination::bootstrap-4';
 
   public function __construct($items, $total, $pages, $firstItem, $currentPage = null, array $options = [])
   {
@@ -100,9 +103,20 @@ class GroupLengthAwarePaginator extends \Illuminate\Pagination\LengthAwarePagina
   public function nextPageUrl()
   {
     $pages = $this->pages;
-    if (count($pages) && $pages->search($this->currentPage()) !== false && $this->currentPage()  < $pages->last()) {
+    if ($this->hasMorePages()) {
       return $this->url($pages[$pages->search($this->currentPage()) + 1]);
     }
+  }
+
+  public function hasMorePages()
+  {
+    $pages = $this->pages;
+    return count($pages) && $pages->search($this->currentPage()) !== false && $pages->search($this->currentPage())  < $pages->search($pages->last());
+  }
+
+  public function hasPages()
+  {
+      return $this->pages->search($this->currentPage()) !== 0 || $this->hasMorePages();
   }
 
   public function lastPage(){
@@ -147,6 +161,24 @@ class GroupLengthAwarePaginator extends \Illuminate\Pagination\LengthAwarePagina
           'to' => $this->lastItem(),
           'total' => $this->total(),
       ];
+  }
+
+  public function links($view = null, $data = [])
+  {
+      return $this->render($view, $data);
+  }
+
+  public function render($view = null, $data = [])
+  {
+      return new HtmlString(static::viewFactory()->make($view ?: static::$defaultView, array_merge($data, [
+          'paginator' => $this,
+          'elements' => $this->elements(),
+      ]))->render());
+  }
+
+  public static function useBootstrapThree()
+  {
+    static::defaultView('group-pagination::default');
   }
 
 }

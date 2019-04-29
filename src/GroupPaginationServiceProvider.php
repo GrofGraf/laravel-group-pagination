@@ -16,27 +16,8 @@ class GroupPaginationServiceProvider extends ServiceProvider
      */
     public function register()
     {
-      /*GroupPaginator::currentPageResolver(function ($pageName = 'page', $default = 1, $pages = []) {
-          $page = $this->app['request']->input($pageName);
-          $page = collect($pages)->search(function($i) use ($page){
-            return $i == $page;
-          });
-          if($page !== false){
-            return $page + 1;
-          }
-      });*/
-      GroupPaginator::currentPageResolver(function ($pageName = 'page', $default = 1, $pages = []) {
-          $page = $this->app['request']->input($pageName);
-          $pageExists = collect($pages)->search(function($i) use ($page){
-            return $i == $page;
-          });
-          if($page && $pageExists !== false){
-            return $page;
-          }elseif(count($pages)){
-            return collect($pages)->first();
-          }
-
-          return 1;
+      GroupPaginator::viewFactoryResolver(function () {
+          return $this->app['view'];
       });
     }
 
@@ -48,9 +29,17 @@ class GroupPaginationServiceProvider extends ServiceProvider
     public function boot()
     {
 
+      $this->loadViewsFrom(__DIR__.'/resources/views', 'group-pagination');
+
+      if ($this->app->runningInConsole()) {
+          $this->publishes([
+              __DIR__.'/resources/views' => $this->app->resourcePath('views/vendor/group-pagination'),
+          ], 'laravel-group-pagination');
+      }
+
       Builder::macro('groupPaginate', function ($column, $start, $length, $order = 'asc', $format = 'Y-m-d', $pageName = 'page') {
 
-        $query = $this->toBase()->orderBy($column, $order)->get(['*']);
+        $query = $this->orderBy($column, $order)->get(['*']);
 
         $total = $query->count();
         $pages = $query->groupBy(function($item, $key) use ($column, $start, $length){
@@ -72,7 +61,7 @@ class GroupPaginationServiceProvider extends ServiceProvider
         $items = $page !== false && isset($pages[$page]) ? $pages[$page] : collect();
         //$items = collect();
         return new GroupLengthAwarePaginator($items, $total, $pages->keys(), $firstItem, $page, [
-            'path' => Paginator::resolveCurrentPath(),
+            'path' => GroupPaginator::resolveCurrentPath(),
             'pageName' => $pageName,
         ]);
 
