@@ -30,14 +30,14 @@ class GroupUrlWindow extends \Illuminate\Pagination\UrlWindow
         // If the current page is very close to the beginning of the page range, we will
         // just render the beginning of the page range, followed by the last 2 of the
         // links in this list, since we will not have room to create a full slider.
-        if ($this->currentPage() <= $this->pages()[$window]) {
+        if (array_search($this->currentPage(), $this->pages()->toArray()) <= ($window - 2)) {
             return $this->getSliderTooCloseToBeginning($window);
         }
 
         // If the current page is close to the ending of the page range we will just get
         // this first couple pages, followed by a larger window of these ending pages
         // since we're too close to the end of the list to create a full on slider.
-        elseif ($this->currentPage() > ($this->pages()[count($this->pages()) - $window + 1])) {
+        elseif (array_search($this->currentPage(), $this->pages()->toArray()) > count($this->pages()) - $window + 1) {
             return $this->getSliderTooCloseToEnding($window);
         }
 
@@ -56,7 +56,7 @@ class GroupUrlWindow extends \Illuminate\Pagination\UrlWindow
     protected function getSliderTooCloseToBeginning($window)
     {
         return [
-            'first' => $this->paginator->getPageRange($this->firstPage(), $this->pages()[$window + 2]),
+            'first' => $this->paginator->getPageRange($this->firstPage(), $this->pages()[$window]),
             'slider' => null,
             'last' => $this->getFinish(),
         ];
@@ -65,7 +65,7 @@ class GroupUrlWindow extends \Illuminate\Pagination\UrlWindow
     protected function getSliderTooCloseToEnding($window)
     {
         $last = $this->paginator->getPageRange(
-            $this->pages()[$this->pages()->count() - ($window + 3)],
+            $this->pages()[$this->pages()->count() - ($window + 1)],
             $this->lastPage()
         );
 
@@ -81,7 +81,7 @@ class GroupUrlWindow extends \Illuminate\Pagination\UrlWindow
     {
         $onEachSide = $this->paginator->onEachSide;
 
-        if ($this->pages()->keys()->last() < ($onEachSide * 2) + 6) {
+        if ($this->pages()->keys()->last() < ($onEachSide * 2) + 4) {
             return $this->getSmallSlider();
         }
 

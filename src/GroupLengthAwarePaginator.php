@@ -15,6 +15,7 @@ class GroupLengthAwarePaginator extends \Illuminate\Pagination\LengthAwarePagina
   protected $firstPage;
   protected $pages;
   protected $firstItem;
+  public $onEachSide = 2;
 
   public static $defaultView = 'group-pagination::bootstrap-4';
 
