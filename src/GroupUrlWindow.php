@@ -30,14 +30,14 @@ class GroupUrlWindow extends \Illuminate\Pagination\UrlWindow
         // If the current page is very close to the beginning of the page range, we will
         // just render the beginning of the page range, followed by the last 2 of the
         // links in this list, since we will not have room to create a full slider.
-        if (array_search($this->currentPage(), $this->pages()->toArray()) <= ($window - 2)) {
+        if (array_search($this->currentPage(), $this->pages()->toArray()) <= ($window - 1)) {
             return $this->getSliderTooCloseToBeginning($window);
         }
 
         // If the current page is close to the ending of the page range we will just get
         // this first couple pages, followed by a larger window of these ending pages
         // since we're too close to the end of the list to create a full on slider.
-        elseif (array_search($this->currentPage(), $this->pages()->toArray()) > count($this->pages()) - $window + 1) {
+        elseif (array_search($this->currentPage(), $this->pages()->toArray()) > count($this->pages()) - ($window + 1)) {
             return $this->getSliderTooCloseToEnding($window);
         }
 
@@ -73,6 +73,15 @@ class GroupUrlWindow extends \Illuminate\Pagination\UrlWindow
             'first' => $this->getStart(),
             'slider' => null,
             'last' => $last,
+        ];
+    }
+
+    protected function getFullSlider($onEachSide)
+    {
+        return [
+            'first'  => $this->getStart(),
+            'slider' => $this->getAdjacentUrlRange($onEachSide - 1),
+            'last'   => $this->getFinish(),
         ];
     }
 
