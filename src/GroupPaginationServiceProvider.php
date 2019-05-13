@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Builder;
 use \Illuminate\Pagination\Paginator;
 use DB;
 
+use Illuminate\Support\Collection;
+
 class GroupPaginationServiceProvider extends ServiceProvider
 {
     /**
@@ -37,7 +39,7 @@ class GroupPaginationServiceProvider extends ServiceProvider
           ], 'laravel-group-pagination');
       }
 
-      Builder::macro('groupPaginate', function ($column, $start, $length, $order = 'asc', $format = 'Y-m-d', $pageName = 'page') {
+      Builder::macro('groupPaginate', function ($column, $start, $length, $order = 'asc', $pageName = 'page') {
 
         $query = $this->orderBy($column, $order)->get(['*']);
 
@@ -66,5 +68,36 @@ class GroupPaginationServiceProvider extends ServiceProvider
         ]);
 
       });
+
+
+      Collection::macro('groupPaginate', function($column, $start, $length, $order = 'asc', $pageName = 'page') {
+         if($order == 'asc'){
+           $query = $this->sortBy($column);
+         }else{
+           $query = $this->sortByDesc($column);
+         }
+         $total = $query->count();
+         $pages = $query->groupBy(function($item, $key) use ($column, $start, $length){
+           if(substr($item->{$column}, $start, $length)){
+             return substr($item->{$column}, $start, $length);
+           }else{
+             throw new \Exception("The field is not in correct format");
+           }
+         });
+         $page = GroupPaginator::resolveCurrentPage($pageName, 1, $pages->keys());
+         $firstItem = 1;
+         foreach($pages->keys() as $p){
+           if($p != $page){
+             $firstItem += $pages[$p]->count();
+           }else{
+             break;
+           }
+         }
+         $items = $page !== false && isset($pages[$page]) ? $pages[$page] : collect();
+         return new GroupLengthAwarePaginator($items, $total, $pages->keys(), $firstItem, $page, [
+             'path' => GroupPaginator::resolveCurrentPath(),
+             'pageName' => $pageName,
+         ]);
+       });
     }
 }
